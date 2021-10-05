@@ -103,9 +103,9 @@ public:
 				if (tile == 0) continue;
 				row[c] = 0;
 				if (hold) {
-					if (tile == hold) {		// can merge
-						row[top++] = ++tile;
-						score += (1 << tile);
+					if (abs(tile - hold) == 1) {		// can merge
+						row[top++] = std::max(tile, hold) + 1;
+						score += fibonacci(std::max(tile, hold) + 1);
 						hold = 0;
 					} else {				// can't merge
 						row[top++] = hold;
