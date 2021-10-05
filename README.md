@@ -42,6 +42,3 @@ To load and review the statistic result from a file:
 ## Author
 
 [Computer Games and Intelligence (CGI) Lab](https://cgilab.nctu.edu.tw/), NYCU, Taiwan
-
-???????
-FUCK
