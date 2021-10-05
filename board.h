@@ -58,6 +58,15 @@ public:
 
 public:
 
+	// convert index to fibonacci number
+	static int fibonacci (int i) {
+		int fib[] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 
+			377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
+			46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269,
+			2178309, 3524578};
+			return fib[i];
+	}
+
 	/**
 	 * place a tile (index value) to the specific position (1-d form index)
 	 * return 0 if the action is valid, or -1 if not
@@ -94,11 +103,11 @@ public:
 				if (tile == 0) continue;
 				row[c] = 0;
 				if (hold) {
-					if (tile == hold) {
+					if (tile == hold) {		// can merge
 						row[top++] = ++tile;
 						score += (1 << tile);
 						hold = 0;
-					} else {
+					} else {				// can't merge
 						row[top++] = hold;
 						hold = tile;
 					}
