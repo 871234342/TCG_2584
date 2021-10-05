@@ -103,7 +103,7 @@ public:
 				if (tile == 0) continue;
 				row[c] = 0;
 				if (hold) {
-					if (abs(tile - hold) == 1) {		// can merge
+					if (std::abs(tile - hold) == 1 || (tile == 1 && hold == 1)) {		// can merge
 						row[top++] = std::max(tile, hold) + 1;
 						score += fibonacci(std::max(tile, hold) + 1);
 						hold = 0;
