@@ -103,11 +103,18 @@ public:
 
 	virtual action take_action(const board& before) {
 		std::shuffle(opcode.begin(), opcode.end(), engine);
+		board::reward best_reward = 0;
+		int best_op = -1;
 		for (int op : opcode) {
 			board::reward reward = board(before).slide(op);
-			if (reward != -1) return action::slide(op);
+			if (reward >= best_reward) {
+				best_reward = reward;
+				best_op = op;
+			}
+			// if (reward != -1) return action::slide(op);
 		}
-		return action();
+		if (best_op != -1)	return action::slide(best_op);
+		else	return action();
 	}
 
 private:
