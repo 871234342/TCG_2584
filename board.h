@@ -67,6 +67,24 @@ public:
 			return fib[i];
 	}
 
+	// convert fibonacci number to index
+	static int r_fibonacci(int i) {
+		int fib[] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 
+			377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
+			46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269,
+			2178309, 3524578};
+		int n = sizeof(fib)/sizeof(fib[0]);
+
+		auto itr = std::find(fib, fib + n, i);
+		if (itr != std::end(fib)) {
+			return std::distance(fib, itr);
+		}
+		else {
+			return -1;
+		}
+
+	}
+
 	/**
 	 * place a tile (index value) to the specific position (1-d form index)
 	 * return 0 if the action is valid, or -1 if not
@@ -182,7 +200,7 @@ public:
 		out << "+------------------------+" << std::endl;
 		for (auto& row : b.tile) {
 			out << "|" << std::dec;
-			for (auto t : row) out << std::setw(6) << ((1 << t) & -2u);
+			for (auto t : row) out << std::setw(6) << fibonacci(t);
 			out << "|" << std::endl;
 		}
 		out << "+------------------------+" << std::endl;
@@ -192,7 +210,7 @@ public:
 		for (int i = 0; i < 16; i++) {
 			while (!std::isdigit(in.peek()) && in.good()) in.ignore(1);
 			in >> b(i);
-			b(i) = std::log2(b(i));
+			b(i) = r_fibonacci(b(i));
 		}
 		return in;
 	}
