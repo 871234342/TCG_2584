@@ -123,8 +123,9 @@ public:
 			int best_count = 0;
 			for (int op : opcode) {
 				board tmp_board = board(before);
-				tmp_board.slide(op);
+				board::reward reward = tmp_board.slide(op);
 				int count = tmp_board.num_empty();
+				if (reward == -1)	continue;
 				if (count >= best_count) {
 					best_count = count;
 					best_op = op;
