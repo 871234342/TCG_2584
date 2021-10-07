@@ -58,7 +58,9 @@ public:
 
 public:
 
-	// convert index to fibonacci number
+	/**
+	 * convert index to fibonacci number
+	 */
 	static int fibonacci (int i) {
 		int fib[] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 
 			377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
@@ -67,7 +69,10 @@ public:
 			return fib[i];
 	}
 
-	// convert fibonacci number to index
+	/**
+	 * return the index of the input fibonacci number
+	 * return -1 if the input is not in the list
+	 */ 
 	static int r_fibonacci(int i) {
 		int fib[] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 
 			377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
@@ -83,6 +88,21 @@ public:
 			return -1;
 		}
 
+	}
+
+	/**
+	 * return the number of empty tiles of the board
+	 */
+	int num_empty() {
+		int count = 0;
+		for (int r = 0; r < 4; r++) {
+			auto& row = tile[r];
+			for (int c = 0; c < 4; c++) {
+				int tile = row[c];
+				if (tile == 0)	count++;
+			}
+		}
+		return count;
 	}
 
 	/**
