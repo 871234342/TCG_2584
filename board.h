@@ -91,6 +91,44 @@ public:
 	}
 
 	/**
+	 * return the length of an monotonic sequence
+	 * return 1, 2, 3, or 4
+	 */
+	int monotonic() {
+		int boundary[] = {0, 3};
+		int directions[] = {1, -1};	// increase or decrease
+		int max_length = 0;
+		// row check
+		for (int idx : boundary) {
+			auto& row = tile[idx];
+			for (int direction : directions) {
+				int length = 1;
+				for (int c = 0; c < 3 ; c++) {
+					if (row[c] - row[c + 1] == direction) {
+						length++;
+						if (length > max_length) max_length = length;
+					}
+					else	length = 1;
+				}
+			}
+		}
+		// column check
+		for (int idx : boundary) {
+			for (int direction : directions) {
+				int length = 0;
+				for (int r = 0; r < 3; r++) {
+					if (tile[r][idx] - tile[r + 1][idx] == direction) {
+						length++;
+						if (length > max_length)	max_length = length;
+					}
+					else	length = 1;
+				}
+			}
+		}
+		return max_length;
+	}
+
+	/**
 	 * return the number of empty tiles of the board
 	 */
 	int num_empty() {
@@ -103,6 +141,19 @@ public:
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * return the sum of four corners
+	 */
+	int corner_sum() {
+		int sum = 0;
+		for (int r : {0, 3}) {
+			for (int c : {0, 3}) {
+				sum += tile[r][c];
+			}
+		}
+		return sum;
 	}
 
 	/**
