@@ -118,7 +118,6 @@ public:
 				}
 			}
 		}
-
 		else if(mode == "space") {
 			int best_count = 0;
 			for (int op : opcode) {
@@ -132,7 +131,6 @@ public:
 				}
 			}
 		}
-
 		else if (mode == "monotonic") {
 			int best = 0;
 			for (int op : opcode) {
@@ -145,20 +143,18 @@ public:
 				}
 			}
 		}
-
 		else if (mode == "corner") {
 			int best = 0;
 			for (int op : opcode) {
 				board tmp_board = board(before);
 				board::reward reward = tmp_board.slide(op);
 				if (reward == -1)	continue;
-				if (reward + tmp_board.corner_sum() >= best) {
+				if ((reward + tmp_board.corner_sum()) >= best) {
 					best = reward + tmp_board.corner_sum();
 					best_op = op;
 				}
 			}
 		}
-	
 		else {
 			for (int op : opcode) {
 				board::reward reward = board(before).slide(op);

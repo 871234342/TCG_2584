@@ -104,7 +104,7 @@ public:
 			for (int direction : directions) {
 				int length = 1;
 				for (int c = 0; c < 3 ; c++) {
-					if (row[c] - row[c + 1] == direction) {
+					if (int(row[c]) - int(row[c + 1]) == direction) {
 						length++;
 						if (length > max_length) max_length = length;
 					}
@@ -117,7 +117,7 @@ public:
 			for (int direction : directions) {
 				int length = 0;
 				for (int r = 0; r < 3; r++) {
-					if (tile[r][c] - tile[r + 1][c] == direction) {
+					if (int(tile[r][c]) - int(tile[r + 1][c]) == direction) {
 						length++;
 						if (length > max_length)	max_length = length;
 					}
