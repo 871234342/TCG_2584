@@ -134,11 +134,15 @@ public:
 		}
 
 		else if (mode == "monotonic") {
+			int best = 0;
 			for (int op : opcode) {
 				board tmp_board = board(before);
 				board::reward reward = tmp_board.slide(op);
 				if (reward == -1)	continue;
-				// under construction
+				if (reward + tmp_board.monotonic() >= best) {
+					best = reward + tmp_board.monotonic();
+					best_op = op;
+				}
 			}
 		}
 

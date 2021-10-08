@@ -99,8 +99,8 @@ public:
 		int directions[] = {1, -1};	// increase or decrease
 		int max_length = 0;
 		// row check
-		for (int idx : boundary) {
-			auto& row = tile[idx];
+		for (int r = 0; r < 4; r++) {
+			auto& row = tile[r];
 			for (int direction : directions) {
 				int length = 1;
 				for (int c = 0; c < 3 ; c++) {
@@ -113,11 +113,11 @@ public:
 			}
 		}
 		// column check
-		for (int idx : boundary) {
+		for (int c = 0; c < 4; c++) {
 			for (int direction : directions) {
 				int length = 0;
 				for (int r = 0; r < 3; r++) {
-					if (tile[r][idx] - tile[r + 1][idx] == direction) {
+					if (tile[r][c] - tile[r + 1][c] == direction) {
 						length++;
 						if (length > max_length)	max_length = length;
 					}
