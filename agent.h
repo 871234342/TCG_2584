@@ -146,17 +146,75 @@ private:
 class player : public random_agent {
 public:
 	player(const std::string& args = "") : random_agent("name=dummy role=player " + args),
-		opcode({ 0, 1, 2, 3 }) {}
+		opcode({ 0, 1, 2, 3 }) {
+			mode = args;
+		}
 
 	virtual action take_action(const board& before) {
 		std::shuffle(opcode.begin(), opcode.end(), engine);
-		for (int op : opcode) {
-			board::reward reward = board(before).slide(op);
-			if (reward != -1) return action::slide(op);
+		int best_op = -1;
+		if (mode == "moron")	return action();
+
+		if (mode == "score") {
+			board::reward best_reward = 0;
+			for (int op : opcode) {
+				board::reward reward = board(before).slide(op);
+				if (reward >= best_reward) {
+					best_reward = reward;
+					best_op = op;
+				}
+			}
 		}
-		return action();
+		else if(mode == "space") {
+			int best_count = 0;
+			for (int op : opcode) {
+				board tmp_board = board(before);
+				board::reward reward = tmp_board.slide(op);
+				int count = tmp_board.num_empty();
+				if (reward == -1)	continue;
+				if (count >= best_count) {
+					best_count = count;
+					best_op = op;
+				}
+			}
+		}
+		else if (mode == "monotonic") {
+			int best = 0;
+			for (int op : opcode) {
+				board tmp_board = board(before);
+				board::reward reward = tmp_board.slide(op);
+				if (reward == -1)	continue;
+				if (reward + tmp_board.monotonic() >= best) {
+					best = reward + tmp_board.monotonic();
+					best_op = op;
+				}
+			}
+		}
+		else if (mode == "corner") {
+			int best = 0;
+			for (int op : opcode) {
+				board tmp_board = board(before);
+				board::reward reward = tmp_board.slide(op);
+				if (reward == -1)	continue;
+				if ((reward + tmp_board.corner_sum()) >= best) {
+					best = reward + tmp_board.corner_sum();
+					best_op = op;
+				}
+			}
+		}
+		else {
+			for (int op : opcode) {
+				board::reward reward = board(before).slide(op);
+				if (reward != -1)	return action::slide(op);
+			}
+			return action();
+		}
+
+		if (best_op != -1)	return action::slide(best_op);
+		else	return action();
 	}
 
 private:
 	std::array<int, 4> opcode;
+	std::string mode;
 };
