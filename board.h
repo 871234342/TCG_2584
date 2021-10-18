@@ -59,104 +59,6 @@ public:
 public:
 
 	/**
-	 * convert index to fibonacci number
-	 */
-	static int fibonacci (int i) {
-		int fib[] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 
-			377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
-			46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269,
-			2178309, 3524578};
-			return fib[i];
-	}
-
-	/**
-	 * return the index of the input fibonacci number
-	 * return -1 if the input is not in the list
-	 */ 
-	static int r_fibonacci(int i) {
-		int fib[] = {0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 
-			377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
-			46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269,
-			2178309, 3524578};
-		int n = sizeof(fib)/sizeof(fib[0]);
-
-		auto itr = std::find(fib, fib + n, i);
-		if (itr != std::end(fib)) {
-			return std::distance(fib, itr);
-		}
-		else {
-			return -1;
-		}
-
-	}
-
-	/**
-	 * return the length of an monotonic sequence
-	 * return 1, 2, 3, or 4
-	 */
-	int monotonic() {
-		int boundary[] = {0, 3};
-		int directions[] = {1, -1};	// increase or decrease
-		int max_length = 0;
-		// row check
-		for (int r = 0; r < 4; r++) {
-			auto& row = tile[r];
-			for (int direction : directions) {
-				int length = 1;
-				for (int c = 0; c < 3 ; c++) {
-					if (int(row[c]) - int(row[c + 1]) == direction) {
-						length++;
-						if (length > max_length) max_length = length;
-					}
-					else	length = 1;
-				}
-			}
-		}
-		// column check
-		for (int c = 0; c < 4; c++) {
-			for (int direction : directions) {
-				int length = 0;
-				for (int r = 0; r < 3; r++) {
-					if (int(tile[r][c]) - int(tile[r + 1][c]) == direction) {
-						length++;
-						if (length > max_length)	max_length = length;
-					}
-					else	length = 1;
-				}
-			}
-		}
-		return max_length;
-	}
-
-	/**
-	 * return the number of empty tiles of the board
-	 */
-	int num_empty() {
-		int count = 0;
-		for (int r = 0; r < 4; r++) {
-			auto& row = tile[r];
-			for (int c = 0; c < 4; c++) {
-				int tile = row[c];
-				if (tile == 0)	count++;
-			}
-		}
-		return count;
-	}
-
-	/**
-	 * return the sum of four corners
-	 */
-	int corner_sum() {
-		int sum = 0;
-		for (int r : {0, 3}) {
-			for (int c : {0, 3}) {
-				sum += tile[r][c];
-			}
-		}
-		return sum;
-	}
-
-	/**
 	 * place a tile (index value) to the specific position (1-d form index)
 	 * return 0 if the action is valid, or -1 if not
 	 */
@@ -192,11 +94,11 @@ public:
 				if (tile == 0) continue;
 				row[c] = 0;
 				if (hold) {
-					if (std::abs(tile - hold) == 1 || (tile == 1 && hold == 1)) {		// can merge
-						row[top++] = std::max(tile, hold) + 1;
-						score += fibonacci(std::max(tile, hold) + 1);
+					if (tile == hold) {
+						row[top++] = ++tile;
+						score += (1 << tile);
 						hold = 0;
-					} else {				// can't merge
+					} else {
 						row[top++] = hold;
 						hold = tile;
 					}
@@ -271,7 +173,7 @@ public:
 		out << "+------------------------+" << std::endl;
 		for (auto& row : b.tile) {
 			out << "|" << std::dec;
-			for (auto t : row) out << std::setw(6) << fibonacci(t);
+			for (auto t : row) out << std::setw(6) << ((1 << t) & -2u);
 			out << "|" << std::endl;
 		}
 		out << "+------------------------+" << std::endl;
@@ -281,7 +183,7 @@ public:
 		for (int i = 0; i < 16; i++) {
 			while (!std::isdigit(in.peek()) && in.good()) in.ignore(1);
 			in >> b(i);
-			b(i) = r_fibonacci(b(i));
+			b(i) = std::log2(b(i));
 		}
 		return in;
 	}
