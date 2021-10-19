@@ -106,6 +106,7 @@ public:
 		int best_op = -1;
 		int best_reward = -1;
 		float best_value = -100000;
+		board best_after;
 		for (int op : {0, 1, 2, 3}) {
 			board after = before;
 			int reward = after.slide(op);
@@ -116,10 +117,41 @@ public:
 				best_reward = reward;
 				best_value = value;
 				best_op = op;
+				best_after = after;
 			}
 		}
-		return action(best_op);
+		if (best_op != -1) {
+			history.push_back({best_reward, best_after});
+		}
+		return action::slide(best_op);
 	}
+
+	virtual void open_episode(const std::string& flag = "") {
+		history.clear();
+	}
+	virtual void close_episode(const std::string& flag = "") {
+		if (history.empty())	return;
+		if (alpha == 0)	return;
+		adjust_value(history[history.size() - 1].after, 0);
+		for (int i = history.size() - 2; i >= 0; i--) {
+			float target = history[i].reward + estimate_value(history[i + 1].after);
+			adjust_value(history[i].after, target);
+		}
+	}
+
+	void adjust_value(const board& after, float target) {
+		float current = estimate_value(after);
+		float error = target - current;
+		float adjust = alpha * error;
+		net[0][extract_index(after, 0, 1, 2, 3)] += adjust;
+		net[1][extract_index(after, 4, 5, 6, 7)] += adjust;
+		net[2][extract_index(after, 8, 9, 10, 11)] += adjust;
+		net[3][extract_index(after, 12, 13, 14, 15)] += adjust;
+		net[4][extract_index(after, 0, 4, 8, 12)] += adjust;
+		net[5][extract_index(after, 1, 5, 9, 13)] += adjust;
+		net[6][extract_index(after, 2, 6, 10, 14)] += adjust;
+		net[7][extract_index(after, 3, 7, 11, 15)] += adjust;
+	}	
 
 protected:
 	virtual void init_weights(const std::string& info) {
@@ -155,6 +187,11 @@ protected:
 protected:
 	std::vector<weight> net;
 	float alpha;
+	struct step{
+		int reward;
+		board after;
+	};
+	std::vector<step> history;
 };
 
 /**
