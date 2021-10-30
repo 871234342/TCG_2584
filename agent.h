@@ -85,14 +85,14 @@ public:
 			save_weights(meta["save"]);
 	}
 
-	int extract_index4(const board& after, int a, int b, int c, int d) {
+	int extract_index(const board& after, int a, int b, int c, int d) {
 		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
 				MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
 				std::min((int)after(d), MAX_INDEX - 1);
 	}
 
-	int extract_index5(const board& after, int a, int b, int c, int d, int e) {
+	int extract_index(const board& after, int a, int b, int c, int d, int e) {
 		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
@@ -100,7 +100,7 @@ public:
 				std::min((int)after(e), MAX_INDEX - 1);
 	}
 
-	int extract_index6(const board& after, int a, int b, int c, int d, int e, int f) {
+	int extract_index(const board& after, int a, int b, int c, int d, int e, int f) {
 		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
@@ -130,10 +130,10 @@ public:
 			default:
 				break;
 			}
-			value += net[0][extract_index5(after, 0, 1, 4, 5, 8)];
-			value += net[1][extract_index5(after, 1, 2, 5, 6, 9)];
-			value += net[2][extract_index4(after, 2, 6, 10, 14)];
-			value += net[3][extract_index4(after, 3, 7, 11, 15)];
+			value += net[0][extract_index(after, 0, 1, 4, 5, 8, 9)];
+			value += net[1][extract_index(after, 1, 2, 5, 6, 9, 10)];
+			value += net[2][extract_index(after, 2, 6, 10, 14)];
+			value += net[3][extract_index(after, 3, 7, 11, 15)];
 			switch (i)
 			{
 			case 0:
@@ -216,10 +216,10 @@ public:
 			default:
 				break;
 			}
-			net[0][extract_index5(after, 0, 1, 4, 5, 8)] += adjust;
-			net[1][extract_index5(after, 1, 2, 5, 6, 9)] += adjust;
-			net[2][extract_index4(after, 2, 6, 10, 14)] += adjust;
-			net[3][extract_index4(after, 3, 7, 11, 15)] += adjust;
+			net[0][extract_index(after, 0, 1, 4, 5, 8, 9)] += adjust;
+			net[1][extract_index(after, 1, 2, 5, 6, 9, 10)] += adjust;
+			net[2][extract_index(after, 2, 6, 10, 14)] += adjust;
+			net[3][extract_index(after, 3, 7, 11, 15)] += adjust;
 			switch (i)
 			{
 			case 0:
@@ -243,8 +243,8 @@ protected:
 	virtual void init_weights(const std::string& info) {
 //		net.emplace_back(65536); // create an empty weight table with size 65536
 //		net.emplace_back(65536); // create an empty weight table with size 65536
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 	}
@@ -274,7 +274,7 @@ protected:
 		board after;
 	};
 	std::vector<step> history;
-	int MAX_INDEX = 24;
+	int MAX_INDEX = 25;
 };
 
 /**
