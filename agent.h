@@ -85,20 +85,25 @@ public:
 			save_weights(meta["save"]);
 	}
 
-	float extract_index(const board& after, int a, int b, int c, int d) {
-		return 33 * 33 * 33 * after(a) + 33 * 33 * after(b) + 33 * after(c) + after(d);
+	float extract_index(const board& after, int a, int b, int c, int d, int e) {
+		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
+				MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
+				MAX_INDEX * MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
+				MAX_INDEX * std::min((int)after(d), MAX_INDEX - 1) + 
+				std::min((int)after(e), MAX_INDEX - 1);
+		// return 33 * 33 * 33 * after(a) + 33 * 33 * after(b) + 33 * after(c) + after(d);
 	}
 
 	float estimate_value (const board& after) {
 		float value = 0;
-		value += net[0][extract_index(after, 0, 1, 2, 3)];
-		value += net[1][extract_index(after, 4, 5, 6, 7)];
-		value += net[2][extract_index(after, 8, 9, 10, 11)];
-		value += net[3][extract_index(after, 12, 13, 14, 15)];
-		value += net[4][extract_index(after, 0, 4, 8, 12)];
-		value += net[5][extract_index(after, 1, 5, 9, 13)];
-		value += net[6][extract_index(after, 2, 6, 10, 14)];
-		value += net[7][extract_index(after, 3, 7, 11, 15)];
+		value += net[0][extract_index(after, 0, 1, 2, 3, 7)];
+		value += net[1][extract_index(after, 4, 5, 6, 7, 11)];
+		value += net[2][extract_index(after, 8, 9, 10, 11, 15)];
+		value += net[3][extract_index(after, 12, 13, 14, 15, 8)];
+		value += net[4][extract_index(after, 0, 4, 8, 12, 13)];
+		value += net[5][extract_index(after, 1, 5, 9, 13, 14)];
+		value += net[6][extract_index(after, 2, 6, 10, 14, 15)];
+		value += net[7][extract_index(after, 3, 7, 11, 15, 2)];
 		return value;
 	}
 
@@ -143,28 +148,28 @@ public:
 		float current = estimate_value(after);
 		float error = target - current;
 		float adjust = alpha * error;
-		net[0][extract_index(after, 0, 1, 2, 3)] += adjust;
-		net[1][extract_index(after, 4, 5, 6, 7)] += adjust;
-		net[2][extract_index(after, 8, 9, 10, 11)] += adjust;
-		net[3][extract_index(after, 12, 13, 14, 15)] += adjust;
-		net[4][extract_index(after, 0, 4, 8, 12)] += adjust;
-		net[5][extract_index(after, 1, 5, 9, 13)] += adjust;
-		net[6][extract_index(after, 2, 6, 10, 14)] += adjust;
-		net[7][extract_index(after, 3, 7, 11, 15)] += adjust;
+		net[0][extract_index(after, 0, 1, 2, 3, 7)] += adjust;
+		net[1][extract_index(after, 4, 5, 6, 7, 11)] += adjust;
+		net[2][extract_index(after, 8, 9, 10, 11, 15)] += adjust;
+		net[3][extract_index(after, 12, 13, 14, 15, 8)] += adjust;
+		net[4][extract_index(after, 0, 4, 8, 12, 13)] += adjust;
+		net[5][extract_index(after, 1, 5, 9, 13, 14)] += adjust;
+		net[6][extract_index(after, 2, 6, 10, 14, 15)] += adjust;
+		net[7][extract_index(after, 3, 7, 11, 15, 2)] += adjust;
 	}	
 
 protected:
 	virtual void init_weights(const std::string& info) {
 //		net.emplace_back(65536); // create an empty weight table with size 65536
 //		net.emplace_back(65536); // create an empty weight table with size 65536
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
-		net.emplace_back(33 * 33 * 33 * 33);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 	}
 	virtual void load_weights(const std::string& path) {
 		std::ifstream in(path, std::ios::in | std::ios::binary);
@@ -192,6 +197,7 @@ protected:
 		board after;
 	};
 	std::vector<step> history;
+	int MAX_INDEX = 24;
 };
 
 /**
