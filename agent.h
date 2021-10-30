@@ -274,7 +274,7 @@ protected:
 		board after;
 	};
 	std::vector<step> history;
-	int MAX_INDEX = 25;
+	int MAX_INDEX = 24;
 };
 
 /**
