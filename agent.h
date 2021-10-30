@@ -85,32 +85,80 @@ public:
 			save_weights(meta["save"]);
 	}
 
-	float extract_index(const board& after, int a, int b, int c, int d, int e) {
+	int extract_index4(const board& after, int a, int b, int c, int d) {
+		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
+				MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
+				MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
+				std::min((int)after(d), MAX_INDEX - 1);
+	}
+
+	int extract_index5(const board& after, int a, int b, int c, int d, int e) {
 		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
 				MAX_INDEX * MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
 				MAX_INDEX * std::min((int)after(d), MAX_INDEX - 1) + 
 				std::min((int)after(e), MAX_INDEX - 1);
-		// return 33 * 33 * 33 * after(a) + 33 * 33 * after(b) + 33 * after(c) + after(d);
+	}
+
+	int extract_index6(const board& after, int a, int b, int c, int d, int e, int f) {
+		return  MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(a), MAX_INDEX - 1) + 
+				MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(b), MAX_INDEX - 1) + 
+				MAX_INDEX * MAX_INDEX * MAX_INDEX * std::min((int)after(c), MAX_INDEX - 1) + 
+				MAX_INDEX * MAX_INDEX * std::min((int)after(d), MAX_INDEX - 1) + 
+				MAX_INDEX * std::min((int)after(e), MAX_INDEX - 1) +
+				std::min((int)after(f), MAX_INDEX - 1);
 	}
 
 	float estimate_value (const board& after) {
 		float value = 0;
-		value += net[0][extract_index(after, 0, 1, 2, 3, 7)];
-		value += net[1][extract_index(after, 4, 5, 6, 7, 11)];
-		value += net[2][extract_index(after, 8, 9, 10, 11, 15)];
-		value += net[3][extract_index(after, 12, 13, 14, 15, 8)];
-		value += net[4][extract_index(after, 0, 4, 8, 12, 13)];
-		value += net[5][extract_index(after, 1, 5, 9, 13, 14)];
-		value += net[6][extract_index(after, 2, 6, 10, 14, 15)];
-		value += net[7][extract_index(after, 3, 7, 11, 15, 2)];
+		board tmp = after;
+
+		for (int i : {0, 1, 2, 3}) {
+			switch (i)
+			{
+			case 0:
+				break;
+			case 1:
+				tmp.reflect_horizontal();
+				break;
+			case 2:
+				tmp.rotate_left();
+				break;
+			case 3:
+				tmp.rotate_right();
+				break;
+			default:
+				break;
+			}
+			value += net[0][extract_index5(after, 0, 1, 4, 5, 8)];
+			value += net[1][extract_index5(after, 1, 2, 5, 6, 9)];
+			value += net[2][extract_index4(after, 2, 6, 10, 14)];
+			value += net[3][extract_index4(after, 3, 7, 11, 15)];
+			switch (i)
+			{
+			case 0:
+				break;
+			case 1:
+				tmp.reflect_horizontal();
+				break;
+			case 2:
+				tmp.rotate_right();
+				break;
+			case 3:
+				tmp.rotate_left();
+				break;
+			default:
+				break;
+			}			
+		}
+
 		return value;
 	}
 
 	virtual action take_action(const board& before) {
 		int best_op = -1;
 		int best_reward = -1;
-		float best_value = -100000;
+		float best_value = -std::numeric_limits<float>::max();
 		board best_after;
 		for (int op : {0, 1, 2, 3}) {
 			board after = before;
@@ -134,6 +182,7 @@ public:
 	virtual void open_episode(const std::string& flag = "") {
 		history.clear();
 	}
+
 	virtual void close_episode(const std::string& flag = "") {
 		if (history.empty())	return;
 		if (alpha == 0)	return;
@@ -148,14 +197,46 @@ public:
 		float current = estimate_value(after);
 		float error = target - current;
 		float adjust = alpha * error;
-		net[0][extract_index(after, 0, 1, 2, 3, 7)] += adjust;
-		net[1][extract_index(after, 4, 5, 6, 7, 11)] += adjust;
-		net[2][extract_index(after, 8, 9, 10, 11, 15)] += adjust;
-		net[3][extract_index(after, 12, 13, 14, 15, 8)] += adjust;
-		net[4][extract_index(after, 0, 4, 8, 12, 13)] += adjust;
-		net[5][extract_index(after, 1, 5, 9, 13, 14)] += adjust;
-		net[6][extract_index(after, 2, 6, 10, 14, 15)] += adjust;
-		net[7][extract_index(after, 3, 7, 11, 15, 2)] += adjust;
+		board tmp = after;
+
+		for (int i : {0, 1, 2, 3}) {
+			switch (i)
+			{
+			case 0:
+				break;
+			case 1:
+				tmp.reflect_horizontal();
+				break;
+			case 2:
+				tmp.rotate_left();
+				break;
+			case 3:
+				tmp.rotate_right();
+				break;
+			default:
+				break;
+			}
+			net[0][extract_index5(after, 0, 1, 4, 5, 8)] += adjust;
+			net[1][extract_index5(after, 1, 2, 5, 6, 9)] += adjust;
+			net[2][extract_index4(after, 2, 6, 10, 14)] += adjust;
+			net[3][extract_index4(after, 3, 7, 11, 15)] += adjust;
+			switch (i)
+			{
+			case 0:
+				break;
+			case 1:
+				tmp.reflect_horizontal();
+				break;
+			case 2:
+				tmp.rotate_right();
+				break;
+			case 3:
+				tmp.rotate_left();
+				break;
+			default:
+				break;
+			}			
+		}
 	}	
 
 protected:
@@ -164,12 +245,8 @@ protected:
 //		net.emplace_back(65536); // create an empty weight table with size 65536
 		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 	}
 	virtual void load_weights(const std::string& path) {
 		std::ifstream in(path, std::ios::in | std::ios::binary);
