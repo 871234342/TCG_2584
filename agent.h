@@ -131,10 +131,10 @@ public:
 			default:
 				break;
 			}
-			value += net[0][extract_index(after, 0, 1, 4, 5, 8, 9)];
-			value += net[1][extract_index(after, 1, 2, 5, 6, 9, 10)];
-			value += net[2][extract_index(after, 2, 6, 10, 14)];
-			value += net[3][extract_index(after, 3, 7, 11, 15)];
+			value += net[0][extract_index(tmp, 0, 1, 4, 5, 8, 9)];
+			value += net[1][extract_index(tmp, 1, 2, 5, 6, 9, 10)];
+			value += net[2][extract_index(tmp, 2, 6, 10, 14)];
+			value += net[3][extract_index(tmp, 3, 7, 11, 15)];
 			switch (i)
 			{
 			case 0:
@@ -219,10 +219,10 @@ public:
 			default:
 				break;
 			}
-			net[0][extract_index(after, 0, 1, 4, 5, 8, 9)] += adjust;
-			net[1][extract_index(after, 1, 2, 5, 6, 9, 10)] += adjust;
-			net[2][extract_index(after, 2, 6, 10, 14)] += adjust;
-			net[3][extract_index(after, 3, 7, 11, 15)] += adjust;
+			net[0][extract_index(tmp, 0, 1, 4, 5, 8, 9)] += adjust;
+			net[1][extract_index(tmp, 1, 2, 5, 6, 9, 10)] += adjust;
+			net[2][extract_index(tmp, 2, 6, 10, 14)] += adjust;
+			net[3][extract_index(tmp, 3, 7, 11, 15)] += adjust;
 			switch (i)
 			{
 			case 0:
