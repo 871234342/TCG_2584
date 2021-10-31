@@ -119,7 +119,8 @@ public:
 			case 0:
 				break;
 			case 1:
-				tmp.reflect_horizontal();
+				tmp.rotate_left();
+				tmp.rotate_left();
 				break;
 			case 2:
 				tmp.rotate_left();
@@ -139,7 +140,8 @@ public:
 			case 0:
 				break;
 			case 1:
-				tmp.reflect_horizontal();
+				tmp.rotate_right();
+				tmp.rotate_right();
 				break;
 			case 2:
 				tmp.rotate_right();
