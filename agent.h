@@ -113,47 +113,50 @@ public:
 		float value = 0;
 		board tmp = after;
 
-		for (int i : {0, 1, 2, 3}) {
-			switch (i)
-			{
-			case 0:
-				break;
-			case 1:
-				tmp.rotate_left();
-				tmp.rotate_left();
-				break;
-			case 2:
-				tmp.rotate_left();
-				break;
-			case 3:
-				tmp.rotate_right();
-				break;
-			default:
-				break;
+		for (bool flip : {false, true}){
+			if (flip)	tmp.reflect_horizontal();
+			for (int i : {0, 1, 2, 3}) {
+				switch (i)
+				{
+				case 0:
+					break;
+				case 1:
+					tmp.rotate_left();
+					tmp.rotate_left();
+					break;
+				case 2:
+					tmp.rotate_left();
+					break;
+				case 3:
+					tmp.rotate_right();
+					break;
+				default:
+					break;
+				}
+				value += net[0][extract_index(tmp, 0, 1, 4, 5, 8)];
+				value += net[1][extract_index(tmp, 1, 2, 5, 6, 9)];
+				value += net[2][extract_index(tmp, 2, 6, 10, 14)];
+				value += net[3][extract_index(tmp, 3, 7, 11, 15)];
+				switch (i)
+				{
+				case 0:
+					break;
+				case 1:
+					tmp.rotate_right();
+					tmp.rotate_right();
+					break;
+				case 2:
+					tmp.rotate_right();
+					break;
+				case 3:
+					tmp.rotate_left();
+					break;
+				default:
+					break;
+				}			
 			}
-			value += net[0][extract_index(tmp, 0, 1, 4, 5, 8, 9)];
-			value += net[1][extract_index(tmp, 1, 2, 5, 6, 9, 10)];
-			value += net[2][extract_index(tmp, 2, 6, 10, 14)];
-			value += net[3][extract_index(tmp, 3, 7, 11, 15)];
-			switch (i)
-			{
-			case 0:
-				break;
-			case 1:
-				tmp.rotate_right();
-				tmp.rotate_right();
-				break;
-			case 2:
-				tmp.rotate_right();
-				break;
-			case 3:
-				tmp.rotate_left();
-				break;
-			default:
-				break;
-			}			
+			if (flip)	tmp.reflect_horizontal();		
 		}
-
 		return value;
 	}
 
@@ -201,45 +204,49 @@ public:
 		float adjust = alpha * error;
 		board tmp = after;
 
-		for (int i : {0, 1, 2, 3}) {
-			switch (i)
-			{
-			case 0:
-				break;
-			case 1:
-				tmp.rotate_left();
-				tmp.rotate_left();
-				break;
-			case 2:
-				tmp.rotate_left();
-				break;
-			case 3:
-				tmp.rotate_right();
-				break;
-			default:
-				break;
+		for (bool flip : {false, true}){
+			if (flip)	tmp.reflect_horizontal();
+			for (int i : {0, 1, 2, 3}) {
+				switch (i)
+				{
+				case 0:
+					break;
+				case 1:
+					tmp.rotate_left();
+					tmp.rotate_left();
+					break;
+				case 2:
+					tmp.rotate_left();
+					break;
+				case 3:
+					tmp.rotate_right();
+					break;
+				default:
+					break;
+				}
+				net[0][extract_index(tmp, 0, 1, 4, 5, 8)] += adjust;
+				net[1][extract_index(tmp, 1, 2, 5, 6, 9)] += adjust;
+				net[2][extract_index(tmp, 2, 6, 10, 14)] += adjust;
+				net[3][extract_index(tmp, 3, 7, 11, 15)] += adjust;
+				switch (i)
+				{
+				case 0:
+					break;
+				case 1:
+					tmp.rotate_right();
+					tmp.rotate_right();
+					break;
+				case 2:
+					tmp.rotate_right();
+					break;
+				case 3:
+					tmp.rotate_left();
+					break;
+				default:
+					break;
+				}			
 			}
-			net[0][extract_index(tmp, 0, 1, 4, 5, 8, 9)] += adjust;
-			net[1][extract_index(tmp, 1, 2, 5, 6, 9, 10)] += adjust;
-			net[2][extract_index(tmp, 2, 6, 10, 14)] += adjust;
-			net[3][extract_index(tmp, 3, 7, 11, 15)] += adjust;
-			switch (i)
-			{
-			case 0:
-				break;
-			case 1:
-				tmp.rotate_right();
-				tmp.rotate_right();
-				break;
-			case 2:
-				tmp.rotate_right();
-				break;
-			case 3:
-				tmp.rotate_left();
-				break;
-			default:
-				break;
-			}			
+			if (flip)	tmp.reflect_horizontal();	
 		}
 	}	
 
@@ -247,8 +254,8 @@ protected:
 	virtual void init_weights(const std::string& info) {
 //		net.emplace_back(65536); // create an empty weight table with size 65536
 //		net.emplace_back(65536); // create an empty weight table with size 65536
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
-		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
+		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 		net.emplace_back(MAX_INDEX * MAX_INDEX * MAX_INDEX * MAX_INDEX);
 	}
